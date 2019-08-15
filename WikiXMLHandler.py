@@ -22,15 +22,14 @@ class WikiXMLHandler(xml.sax.ContentHandler):
 
     def __init__(self):
         self.textProcessor = TextProcessor()
-        self.currentTag = ""
         self.docID = 0
-        self.title = ""
-        self.infobox = ""
-        self.infoboxFlag = 0
-        self.body = ""
-        self.categories = ""
-        self.externalLinks = ""
-        self.externalLinksFlag = 0
+        self.reset()
+
+    def reset(self):
+        self.currentTag = ""
+        self.title = self.infobox = self.body = ""
+        self.categories = self.references = self.externalLinks = ""
+        self.infoboxFlag = self.referencesFlag = self.externalLinksFlag = 0
     
 
     def startElement(self, tag, attributes):
@@ -45,19 +44,13 @@ class WikiXMLHandler(xml.sax.ContentHandler):
             self.docID += 1
         elif tag == "title":
             self.textProcessor.processText(self.title, tag)
-            self.title = ""
         elif tag == "text":
             self.textProcessor.processText(self.body, tag)
             self.textProcessor.processText(self.categories, "categories")
             self.textProcessor.processText(self.infobox, "infobox")
+            self.textProcessor.processText(self.references, "references")
             self.textProcessor.processText(self.externalLinks, "external_links")
-            self.body = ""
-            self.categories = ""
-            self.infobox = ""
-            self.infoboxFlag = 0
-            self.externalLinks = ""
-            self.externalLinksFlag = 0
-        self.currentTag = ""
+        self.reset()
 
     
     def characters(self, content):
@@ -77,10 +70,14 @@ class WikiXMLHandler(xml.sax.ContentHandler):
                 content = content[pos:]
             elif "==External links==" in content or "== External links==" in content:
                 self.externalLinksFlag = 1
+            elif "==Reference" in content or "== Reference" in content or "==reference" in content:
+                self.referencesFlag = 1 
             else:
                 self.body += content
 
             if self.infoboxFlag >= 1:
+                self.referencesFlag = 0
+                self.externalLinksFlag = 0
                 if "{{" in content:
                     self.infoboxFlag += 1
                 if "}}" in content:
@@ -89,14 +86,18 @@ class WikiXMLHandler(xml.sax.ContentHandler):
                     self.infoboxFlag = 0
                 self.infobox += content
 
+            if self.referencesFlag == 1:
+                self.infoboxFlag = 0
+                self.externalLinksFlag = 0
+                if self.references != "" and len(content) > 1 and content[0] != '{' and content[1] != '{':
+                    self.referencesFlag = 0
+                elif len(content) > 1 and content[0] == '{' and content[1] == '{':
+                    self.references += content
+
             if self.externalLinksFlag == 1:
                 self.infoboxFlag = 0
-                if self.externalLinks != "" and len(content) > 1 and content[0] != '*':
+                self.referencesFlag = 0
+                if self.externalLinks != "" and len(content) > 1 and content[0] != '{':
                     self.externalLinksFlag = 0
                 elif len(content) > 0 and content[0] == '*':
                     self.externalLinks += content
-
-
-# ==References==
-# {{Reflist}}
-
