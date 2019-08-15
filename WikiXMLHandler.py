@@ -26,6 +26,7 @@ class WikiXMLHandler(xml.sax.ContentHandler):
         self.docID = 0
         self.title = ""
         self.infobox = ""
+        self.infoboxFlag = 0
         self.body = ""
         self.categories = ""
     
@@ -46,21 +47,31 @@ class WikiXMLHandler(xml.sax.ContentHandler):
         elif tag == "text":
             self.textProcessor.processText(self.body, tag)
             self.textProcessor.processText(self.categories, "categories")
+            self.textProcessor.processText(self.infobox, "infobox")
             self.body = ""
             self.categories = ""
         self.currentTag = ""
 
     
     def characters(self, content):
-        # if content == "==References==":
         if self.currentTag == "title":
             self.title += content
             # self.textProcessor.processText(content, self.currentTag)
+    
         if self.currentTag == "text":
             if "[[Category:" in content:
                 self.categories += content[11:]
+            elif "{{Infobox" in content:
+                self.infoboxFlag = 1
+                content = content[9:]
             else:
                 self.body += content
+
+            if self.infoboxFlag == 1:
+                if content == "}}":
+                    self.infoboxFlag = 0
+                else:
+                    self.infobox += content
 
 
 # ==References==
