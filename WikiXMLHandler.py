@@ -29,6 +29,8 @@ class WikiXMLHandler(xml.sax.ContentHandler):
         self.infoboxFlag = 0
         self.body = ""
         self.categories = ""
+        self.externalLinks = ""
+        self.externalLinksFlag = 0
     
 
     def startElement(self, tag, attributes):
@@ -48,34 +50,53 @@ class WikiXMLHandler(xml.sax.ContentHandler):
             self.textProcessor.processText(self.body, tag)
             self.textProcessor.processText(self.categories, "categories")
             self.textProcessor.processText(self.infobox, "infobox")
+            self.textProcessor.processText(self.externalLinks, "external_links")
             self.body = ""
             self.categories = ""
+            self.infobox = ""
+            self.infoboxFlag = 0
+            self.externalLinks = ""
+            self.externalLinksFlag = 0
         self.currentTag = ""
 
     
     def characters(self, content):
         if self.currentTag == "title":
             self.title += content
-            # self.textProcessor.processText(content, self.currentTag)
-    
-        if self.currentTag == "text":
-            if "[[Category:" in content:
-                self.categories += content[11:]
-            elif "{{Infobox" in content:
+        elif self.currentTag == "text":
+            if "[[Category:" in content or "[[category:" in content:
+                pos = content.find("[[Category:")
+                if pos == -1:
+                    pos = content.find("[[category:")
+                self.categories += content[pos:]
+            elif "{{Infobox" in content or "{{infobox" in content:
                 self.infoboxFlag = 1
-                content = content[9:]
+                pos = content.find("{{Infobox")
+                if pos == -1:
+                    pos = content.find("{{infobox")
+                content = content[pos:]
+            elif "==External links==" in content or "== External links==" in content:
+                self.externalLinksFlag = 1
             else:
                 self.body += content
 
-            if self.infoboxFlag == 1:
+            if self.infoboxFlag >= 1:
+                if "{{" in content:
+                    self.infoboxFlag += 1
+                if "}}" in content:
+                    self.infoboxFlag -= 1
                 if content == "}}":
                     self.infoboxFlag = 0
-                else:
-                    self.infobox += content
+                self.infobox += content
+
+            if self.externalLinksFlag == 1:
+                self.infoboxFlag = 0
+                if self.externalLinks != "" and len(content) > 1 and content[0] != '*':
+                    self.externalLinksFlag = 0
+                elif len(content) > 0 and content[0] == '*':
+                    self.externalLinks += content
 
 
 # ==References==
 # {{Reflist}}
 
-# [[Category:Churches in California]]
-# [[Category:Buildings and structures in Siskiyou County, California]]

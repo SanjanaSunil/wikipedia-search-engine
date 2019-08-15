@@ -28,6 +28,8 @@ class TextProcessor():
                 self.wordCount[token][2] += 1
             elif tagType == "infobox":
                 self.wordCount[token][3] += 1
+            elif tagType == "external_links":
+                self.wordCount[token][4] += 1
 
 
     def createIndex(self, docID):
