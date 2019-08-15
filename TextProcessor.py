@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import re
-from collections import OrderedDict
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer 
 
@@ -9,63 +8,33 @@ from nltk.stem import WordNetLemmatizer
 class TextProcessor():
 
     def __init__(self):
-        self.titleWordCount = {}
-        self.bodyWordCount = {}
+        self.wordCount = {}
     
 
     def processText(self, text, tagType):
         """ Performs case folding, tokenisation and stemming """
         text = text.lower()
         tokens = self.stem(self.removeStopWords(self.tokenize(text)))
-        # tokens = lemmatize(tokens)
+        # tokens = self.lemmatize(tokens)
         
         for token in tokens:
-
+            if token not in self.wordCount:
+                self.wordCount[token] = [0, 0, 0, 0, 0, 0]
             if tagType == "title":
-                if token not in self.titleWordCount:
-                    self.titleWordCount[token] = 0
-                self.titleWordCount[token] += 1
-
+                self.wordCount[token][0] += 1
             elif tagType == "text":
-                if token not in self.bodyWordCount:
-                    self.bodyWordCount[token] = 0
-                self.bodyWordCount[token] += 1
+                self.wordCount[token][1] += 1
+            elif tagType == "categories":
+                self.wordCount[token][2] += 1
 
 
     def createIndex(self, docID):
-        sortedTitleWords = sorted(self.titleWordCount.keys())
-        sortedBodyWords = sorted(self.bodyWordCount.keys())
-
+        sortedWords = sorted(self.wordCount.keys())
         print(docID)
-        
-        i = 0
-        j = 0
-        while i < len(sortedTitleWords) and j < len(sortedBodyWords):
-            if sortedTitleWords[i] < sortedBodyWords[j]:
-                val = self.titleWordCount[sortedTitleWords[i]]
-                print(sortedTitleWords[i], " : ", val)
-                i += 1
-            elif sortedBodyWords[j] < sortedTitleWords[i]:
-                val = self.bodyWordCount[sortedBodyWords[j]]
-                print(sortedBodyWords[j], " : ", val)
-                j += 1
-            else:
-                val1 = self.titleWordCount[sortedTitleWords[i]]
-                val2 = self.bodyWordCount[sortedBodyWords[j]]
-                print(sortedTitleWords[i], " : ", val1 + val2)
-                i += 1
-                j += 1
-        while i < len(sortedTitleWords):
-            val = self.titleWordCount[sortedTitleWords[i]]
-            print(sortedTitleWords[i], " : ", val)
-            i += 1
-        while j < len(sortedBodyWords):
-            val = self.bodyWordCount[sortedBodyWords[j]]
-            print(sortedBodyWords[j], " : ", val)
-            j += 1
+        for word in sortedWords:
+            print(word, " : ", self.wordCount[word])
 
-        self.titleWordCount = {}
-        self.bodyWordCount = {}
+        self.wordCount = {}
 
 
     def tokenize(self, text):

@@ -25,7 +25,9 @@ class WikiXMLHandler(xml.sax.ContentHandler):
         self.currentTag = ""
         self.docID = 0
         self.title = ""
-        self.text = ""
+        self.infobox = ""
+        self.body = ""
+        self.categories = ""
     
 
     def startElement(self, tag, attributes):
@@ -42,14 +44,27 @@ class WikiXMLHandler(xml.sax.ContentHandler):
             self.textProcessor.processText(self.title, tag)
             self.title = ""
         elif tag == "text":
-            self.textProcessor.processText(self.text, tag)
-            self.text = ""
+            self.textProcessor.processText(self.body, tag)
+            self.textProcessor.processText(self.categories, "categories")
+            self.body = ""
+            self.categories = ""
         self.currentTag = ""
 
     
     def characters(self, content):
+        # if content == "==References==":
         if self.currentTag == "title":
             self.title += content
             # self.textProcessor.processText(content, self.currentTag)
         if self.currentTag == "text":
-            self.text += content
+            if "[[Category:" in content:
+                self.categories += content[11:]
+            else:
+                self.body += content
+
+
+# ==References==
+# {{Reflist}}
+
+# [[Category:Churches in California]]
+# [[Category:Buildings and structures in Siskiyou County, California]]
