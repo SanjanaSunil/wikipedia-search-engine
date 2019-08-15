@@ -40,17 +40,16 @@ class WikiXMLHandler(xml.sax.ContentHandler):
     
     def endElement(self, tag):
         if tag == "page":
-            self.textProcessor.createIndex(self.docID)
-            self.docID += 1
-        elif tag == "title":
-            self.textProcessor.processText(self.title, tag)
-        elif tag == "text":
-            self.textProcessor.processText(self.body, tag)
+            self.textProcessor.processText(self.title, "title")
+            self.textProcessor.processText(self.body, "text")
             self.textProcessor.processText(self.categories, "categories")
             self.textProcessor.processText(self.infobox, "infobox")
             self.textProcessor.processText(self.references, "references")
             self.textProcessor.processText(self.externalLinks, "external_links")
-        self.reset()
+            
+            self.textProcessor.createIndex(self.docID)
+            self.docID += 1
+            self.reset()
 
     
     def characters(self, content):
