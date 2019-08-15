@@ -10,29 +10,35 @@ class WikiXMLHandler(xml.sax.ContentHandler):
 
     Attributes
     ----------
-    CurrentData : string
+    CurrentTag : string
         Indicates current tag
 
     Other attributes store content of the corresponding tag
     """
 
     def __init__(self):
-        self.CurrentData = ""
+        self.CurrentTag = ""
         self.title = ""
+        self.text = ""
     
 
     def startElement(self, tag, attributes):
-        self.CurrentData = tag
+        self.CurrentTag = tag
         if tag == "page":
             print("NEW PAGE STARTING!")
     
     
     def endElement(self, tag):
-        if self.CurrentData == "title":
+        if self.CurrentTag == "title":
             print(self.title)
-        self.CurrentData = ""
+            self.title = ""
+        elif self.CurrentTag == "text":
+            self.text = ""
+        self.CurrentTag = ""
 
     
     def characters(self, content):
-        if self.CurrentData == "title":
-            self.title = content
+        if self.CurrentTag == "title":
+            self.title += content
+        # elif self.CurrentTag == "text":
+        #     self.text += content
