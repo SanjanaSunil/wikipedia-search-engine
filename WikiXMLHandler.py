@@ -68,10 +68,10 @@ class WikiXMLHandler(xml.sax.ContentHandler):
                 if pos == -1:
                     pos = content.find("{{infobox")
                 content = content[pos:]
-            elif "==External links==" in content or "== External links==" in content:
-                self.externalLinksFlag = 1
             elif "==Reference" in content or "== Reference" in content or "==reference" in content:
                 self.referencesFlag = 1 
+            elif "==External links==" in content or "== External links==" in content:
+                self.externalLinksFlag = 1
             else:
                 self.body += content
 

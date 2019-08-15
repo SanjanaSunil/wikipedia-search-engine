@@ -3,12 +3,14 @@
 import re
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer 
+from nltk.corpus import stopwords
 
 
 class TextProcessor():
 
     def __init__(self):
         self.wordCount = {}
+        self.stop_words = set(stopwords.words('english'))    
     
 
     def processText(self, text, tagType):
@@ -49,7 +51,7 @@ class TextProcessor():
         return tokens
 
     def removeStopWords(self, tokens):
-        tokens = [token for token in tokens if len(token) > 1]
+        tokens = [token for token in tokens if not token in self.stop_words and len(token) > 1]
         return tokens
 
     def stem(self, tokens):
