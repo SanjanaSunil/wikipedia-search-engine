@@ -35,32 +35,34 @@ class TextProcessor():
     def createIndex(self, docID):
         sortedTitleWords = sorted(self.titleWordCount.keys())
         sortedBodyWords = sorted(self.bodyWordCount.keys())
+
+        print(docID)
         
-        print(sortedTitleWords)
-        print(sortedBodyWords)
-        print(self.titleWordCount)
-        print(self.bodyWordCount)
-        # print(docID)
-        # i = 0
-        # j = 0
-        # while i < len(sortedTitleWords) and j < len(sortedBodyWords):
-        #     if sortedTitleWords[i] < sortedBodyWords[j]:
-        #         print(sortedTitleWords[i], " : ", self.titleWordCount[sortedTitleWords[i]])
-        #         i += 1
-        #     elif sortedBodyWords[j] < sortedTitleWords[i]:
-        #         print(sortedBodyWords[j], " : ", self.bodyWordCount[sortedBodyWords[j]])
-        #         j += 1
-        #     else:
-        #         print(sortedTitleWords[i], " : ", self.titleWordCount[sortedTitleWords[i]] + self.bodyWordCount[sortedBodyWords[j]])
-        #         i += 1
-        #         j += 1
-        # while i < len(sortedTitleWords):
-        #     print(sortedTitleWords[i], " : ", self.titleWordCount[sortedTitleWords[i]])
-        #     i += 1
-        # while j < len(sortedBodyWords):
-        #     if sortedTitleWords[i] > sortedBodyWords[j]:
-        #         print(sortedBodyWords[j], " : ", self.bodyWordCount[sortedBodyWords[j]])
-        #         j += 1
+        i = 0
+        j = 0
+        while i < len(sortedTitleWords) and j < len(sortedBodyWords):
+            if sortedTitleWords[i] < sortedBodyWords[j]:
+                val = self.titleWordCount[sortedTitleWords[i]]
+                print(sortedTitleWords[i], " : ", val)
+                i += 1
+            elif sortedBodyWords[j] < sortedTitleWords[i]:
+                val = self.bodyWordCount[sortedBodyWords[j]]
+                print(sortedBodyWords[j], " : ", val)
+                j += 1
+            else:
+                val1 = self.titleWordCount[sortedTitleWords[i]]
+                val2 = self.bodyWordCount[sortedBodyWords[j]]
+                print(sortedTitleWords[i], " : ", val1 + val2)
+                i += 1
+                j += 1
+        while i < len(sortedTitleWords):
+            val = self.titleWordCount[sortedTitleWords[i]]
+            print(sortedTitleWords[i], " : ", val)
+            i += 1
+        while j < len(sortedBodyWords):
+            val = self.bodyWordCount[sortedBodyWords[j]]
+            print(sortedBodyWords[j], " : ", val)
+            j += 1
 
         self.titleWordCount = {}
         self.bodyWordCount = {}
