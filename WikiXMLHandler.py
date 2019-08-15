@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import xml.sax
+import processCorpus
 
 class WikiXMLHandler(xml.sax.ContentHandler):
     
@@ -10,7 +11,7 @@ class WikiXMLHandler(xml.sax.ContentHandler):
 
     Attributes
     ----------
-    CurrentTag : string
+    currentTag : string
         Tag being currently processed
 
     docID : int
@@ -20,31 +21,31 @@ class WikiXMLHandler(xml.sax.ContentHandler):
     """
 
     def __init__(self):
-        self.CurrentTag = ""
+        self.currentTag = ""
         self.docID = 0
         self.title = ""
         self.text = ""
     
 
     def startElement(self, tag, attributes):
-        self.CurrentTag = tag
+        self.currentTag = tag
         if tag == "page":
-            print("NEW PAGE STARTING!", self.docID)
+            print("NEW PAGE STARTING! =========", self.docID)
     
     
     def endElement(self, tag):
         if tag == "page":
             self.docID += 1
         elif tag == "title":
-            print(self.title)
             self.title = ""
         elif tag == "text":
             self.text = ""
-        self.CurrentTag = ""
+        self.currentTag = ""
 
     
     def characters(self, content):
-        if self.CurrentTag == "title":
+        if self.currentTag == "title":
+            processCorpus.processText(content, self.docID, self.currentTag)
             self.title += content
-        # elif self.CurrentTag == "text":
+        # elif self.currentTag == "text":
         #     self.text += content
