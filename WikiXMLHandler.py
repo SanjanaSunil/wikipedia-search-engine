@@ -36,15 +36,3 @@ class WikiXMLHandler(xml.sax.ContentHandler):
     def characters(self, content):
         if self.CurrentData == "title":
             self.title = content
-
-
-
-if __name__ == "__main__":
-    
-    parser = xml.sax.make_parser()
-    parser.setFeature(xml.sax.handler.feature_namespaces, 0)
-
-    Handler = WikiXMLHandler()
-    parser.setContentHandler(Handler)
-
-    parser.parse("../wiki.xml")
