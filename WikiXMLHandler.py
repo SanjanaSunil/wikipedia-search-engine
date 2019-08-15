@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import xml.sax
-import processCorpus
+from processCorpus import TextProcessor
 
 class WikiXMLHandler(xml.sax.ContentHandler):
     
@@ -21,6 +21,7 @@ class WikiXMLHandler(xml.sax.ContentHandler):
     """
 
     def __init__(self):
+        self.textProcessor = TextProcessor()
         self.currentTag = ""
         self.docID = 0
         self.title = ""
@@ -30,11 +31,12 @@ class WikiXMLHandler(xml.sax.ContentHandler):
     def startElement(self, tag, attributes):
         self.currentTag = tag
         if tag == "page":
-            print("NEW PAGE STARTING! =========", self.docID)
+            print("\n\n\n==============NEW PAGE STARTING! =============", self.docID)
     
     
     def endElement(self, tag):
         if tag == "page":
+            self.textProcessor.createIndex()
             self.docID += 1
         elif tag == "title":
             self.title = ""
@@ -44,8 +46,5 @@ class WikiXMLHandler(xml.sax.ContentHandler):
 
     
     def characters(self, content):
-        if self.currentTag == "title":
-            processCorpus.processText(content, self.docID, self.currentTag)
-            self.title += content
-        # elif self.currentTag == "text":
-        #     self.text += content
+        if self.currentTag == "title" or self.currentTag == "text":
+            self.textProcessor.processText(content, self.currentTag)
