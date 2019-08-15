@@ -11,13 +11,17 @@ class WikiXMLHandler(xml.sax.ContentHandler):
     Attributes
     ----------
     CurrentTag : string
-        Indicates current tag
+        Tag being currently processed
+
+    docID : int
+        New ID of article being processed
 
     Other attributes store content of the corresponding tag
     """
 
     def __init__(self):
         self.CurrentTag = ""
+        self.docID = 0
         self.title = ""
         self.text = ""
     
@@ -25,14 +29,16 @@ class WikiXMLHandler(xml.sax.ContentHandler):
     def startElement(self, tag, attributes):
         self.CurrentTag = tag
         if tag == "page":
-            print("NEW PAGE STARTING!")
+            print("NEW PAGE STARTING!", self.docID)
     
     
     def endElement(self, tag):
-        if self.CurrentTag == "title":
+        if tag == "page":
+            self.docID += 1
+        elif tag == "title":
             print(self.title)
             self.title = ""
-        elif self.CurrentTag == "text":
+        elif tag == "text":
             self.text = ""
         self.CurrentTag = ""
 
