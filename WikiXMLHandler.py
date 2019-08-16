@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import xml.sax
-import multiprocessing
 from TextProcessor import TextProcessor
 
 class WikiXMLHandler(xml.sax.ContentHandler):

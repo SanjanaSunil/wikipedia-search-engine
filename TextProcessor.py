@@ -42,7 +42,7 @@ class TextProcessor():
 
     def createIndex(self, docID):
         sortedWords = sorted(self.wordCount.keys())
-        print(docID)
+        # print(docID)
         f = open(DIR + "/" + str(docID) + '.txt', "w+")
         for word in sortedWords:
             f.write(word + ' ' + str(self.wordCount[word]) + '\n')
