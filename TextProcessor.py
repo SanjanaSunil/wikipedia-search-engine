@@ -51,12 +51,12 @@ class TextProcessor():
 
 
     def tokenize(self, text):
-        tokens = re.findall(r"[\w']{2,}", text)
+        tokens = re.findall(r"[\w']{3,}", text)
         tokens = [token.replace("'", "").replace("_", "") for token in tokens]
         return tokens
 
     def removeStopWords(self, tokens):
-        tokens = [token for token in tokens if not token in self.stop_words]
+        tokens = [token for token in tokens if not token in self.stop_words and token.isalnum()]
         return tokens
 
     def stem(self, tokens):

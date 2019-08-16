@@ -33,9 +33,7 @@ class WikiXMLHandler(xml.sax.ContentHandler):
     
 
     def startElement(self, tag, attributes):
-        self.currentTag = tag
-        # if tag == "page":
-        #     print("\n\n\n============== NEW PAGE STARTING! =============", self.docID)
+        self.currentTag = tag 
     
     
     def endElement(self, tag):
