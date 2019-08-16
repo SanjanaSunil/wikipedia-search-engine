@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import xml.sax
+import multiprocessing
 from TextProcessor import TextProcessor
 
 class WikiXMLHandler(xml.sax.ContentHandler):
@@ -34,20 +35,23 @@ class WikiXMLHandler(xml.sax.ContentHandler):
 
     def startElement(self, tag, attributes):
         self.currentTag = tag
-        if tag == "page":
-            print("\n\n\n============== NEW PAGE STARTING! =============", self.docID)
+        # if tag == "page":
+        #     print("\n\n\n============== NEW PAGE STARTING! =============", self.docID)
     
     
     def endElement(self, tag):
         if tag == "page":
-            self.textProcessor.processText(self.title, "title")
-            self.textProcessor.processText(self.body, "text")
-            self.textProcessor.processText(self.categories, "categories")
-            self.textProcessor.processText(self.infobox, "infobox")
-            self.textProcessor.processText(self.references, "references")
-            self.textProcessor.processText(self.externalLinks, "external_links")
+            # threading.Thread(target=self.test, args=()).start()
+            processor = TextProcessor()   
+            processor.processText(self.title, "title")
+            processor.processText(self.body, "text")
+            processor.processText(self.categories, "categories")
+            processor.processText(self.infobox, "infobox")
+            processor.processText(self.references, "references")
+            processor.processText(self.externalLinks, "external_links")
             
-            self.textProcessor.createIndex(self.docID)
+            processor.createIndex(self.docID)
+            del processor
             self.docID += 1
             self.reset()
 

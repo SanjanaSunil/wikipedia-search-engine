@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
 import re
-from nltk.stem import PorterStemmer
+import nltk
+# from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer 
 from nltk.corpus import stopwords
 
@@ -38,6 +39,7 @@ class TextProcessor():
 
     def createIndex(self, docID):
         sortedWords = sorted(self.wordCount.keys())
+        print("\n\n\n============== NEW PAGE STARTING! =============", docID)
         print(docID)
         for word in sortedWords:
             print(word, " : ", self.wordCount[word])
@@ -55,8 +57,9 @@ class TextProcessor():
         return tokens
 
     def stem(self, tokens):
-        porter = PorterStemmer()
-        stemmedTokens = [porter.stem(token) for token in tokens]
+        sno = nltk.stem.SnowballStemmer('english')
+        # porter = PorterStemmer()
+        stemmedTokens = [sno.stem(token) for token in tokens]
         return stemmedTokens
 
 
