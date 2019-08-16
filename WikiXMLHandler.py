@@ -42,16 +42,16 @@ class WikiXMLHandler(xml.sax.ContentHandler):
     def endElement(self, tag):
         if tag == "page":
             # threading.Thread(target=self.test, args=()).start()
-            processor = TextProcessor()   
-            processor.processText(self.title, "title")
-            processor.processText(self.body, "text")
-            processor.processText(self.categories, "categories")
-            processor.processText(self.infobox, "infobox")
-            processor.processText(self.references, "references")
-            processor.processText(self.externalLinks, "external_links")
+            # processor = TextProcessor()   
+            self.textProcessor.processText(self.title, "title")
+            self.textProcessor.processText(self.body, "text")
+            self.textProcessor.processText(self.categories, "categories")
+            self.textProcessor.processText(self.infobox, "infobox")
+            self.textProcessor.processText(self.references, "references")
+            self.textProcessor.processText(self.externalLinks, "external_links")
             
-            processor.createIndex(self.docID)
-            del processor
+            self.textProcessor.createIndex(self.docID)
+            # del processor
             self.docID += 1
             self.reset()
 

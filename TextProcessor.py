@@ -1,15 +1,18 @@
 #!/usr/bin/python3
 
 import re
+import os
 import nltk
 # from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer 
 from nltk.corpus import stopwords
 
+DIR = 'indices' 
 
 class TextProcessor():
 
     def __init__(self):
+        os.mkdir(DIR)
         self.wordCount = {}
         self.stop_words = set(stopwords.words('english'))    
     
@@ -39,11 +42,14 @@ class TextProcessor():
 
     def createIndex(self, docID):
         sortedWords = sorted(self.wordCount.keys())
-        print("\n\n\n============== NEW PAGE STARTING! =============", docID)
+        # print("\n\n\n============== NEW PAGE STARTING! =============", docID)
         print(docID)
+        # for word in sortedWords:
+        #     print(word, " : ", self.wordCount[word])
+        f = open(DIR + "/" + str(docID) + '.txt', "w+")
         for word in sortedWords:
-            print(word, " : ", self.wordCount[word])
-
+            f.write(word + '\n')
+        f.close()
         self.wordCount = {}
 
 
