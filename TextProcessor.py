@@ -30,9 +30,9 @@ class TextProcessor():
                 self.wordCount[token][0] += 1
             elif tagType == "text":
                 self.wordCount[token][1] += 1
-            elif tagType == "categories":
-                self.wordCount[token][2] += 1
             elif tagType == "infobox":
+                self.wordCount[token][2] += 1
+            elif tagType == "categories":
                 self.wordCount[token][3] += 1
             elif tagType == "references":
                 self.wordCount[token][4] += 1
@@ -41,11 +41,28 @@ class TextProcessor():
 
 
     def createIndex(self, docID):
-        sortedWords = sorted(self.wordCount.keys())
         # print(docID)
+        sortedWords = sorted(self.wordCount.keys())
         f = open(DIR + "/" + str(docID) + '.txt', "w+")
+
         for word in sortedWords:
-            f.write(word + ' ' + str(self.wordCount[word]) + '\n')
+            fieldString = ""
+            fieldCount = self.wordCount[word]
+            totalCount = sum(fieldCount)
+            if fieldCount[0] > 0:
+                fieldString += 't' + str(fieldCount[0])
+            if fieldCount[1] > 0:
+                fieldString += 'b' + str(fieldCount[1])
+            if fieldCount[2] >  0:
+                fieldString += 'i' + str(fieldCount[2])
+            if fieldCount[3] >  0:
+                fieldString += 'c' + str(fieldCount[3])
+            if fieldCount[4] >  0:
+                fieldString += 'r' + str(fieldCount[4])
+            if fieldCount[5] >  0:
+                fieldString += 'e' + str(fieldCount[5])        
+            f.write(word + ':' + str(totalCount) + 'd' + str(docID) + fieldString + '\n')
+        
         f.close()
         self.wordCount = {}
 
