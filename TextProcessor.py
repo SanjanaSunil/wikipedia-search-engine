@@ -42,13 +42,10 @@ class TextProcessor():
 
     def createIndex(self, docID):
         sortedWords = sorted(self.wordCount.keys())
-        # print("\n\n\n============== NEW PAGE STARTING! =============", docID)
         print(docID)
-        # for word in sortedWords:
-        #     print(word, " : ", self.wordCount[word])
         f = open(DIR + "/" + str(docID) + '.txt', "w+")
         for word in sortedWords:
-            f.write(word + '\n')
+            f.write(word + ' ' + str(self.wordCount[word]) + '\n')
         f.close()
         self.wordCount = {}
 
