@@ -1,9 +1,0 @@
-hyeon:2d0t1b1
-kim:2d0t1b1
-lee:2d1t1b1
-move:1d0b1
-|move:1d1b1
-redirect:1d0b1
-|redirect:1d1b1
-woo:2d0t1b1
-yeol:2d1t1b1
