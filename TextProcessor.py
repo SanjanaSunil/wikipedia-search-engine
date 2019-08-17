@@ -1,18 +1,14 @@
 #!/usr/bin/python3
 
 import re
-import os
-import nltk
-# from nltk.stem import PorterStemmer
-from nltk.stem import WordNetLemmatizer 
+import config
 from nltk.corpus import stopwords
-
-DIR = 'indices' 
+from nltk.stem import SnowballStemmer
+from nltk.stem import WordNetLemmatizer 
 
 class TextProcessor():
 
     def __init__(self):
-        os.mkdir(DIR)
         self.wordCount = {}
         self.stop_words = set(stopwords.words('english'))    
     
@@ -43,7 +39,7 @@ class TextProcessor():
     def createIndex(self, docID):
         # print(docID)
         sortedWords = sorted(self.wordCount.keys())
-        f = open(DIR + "/" + str(docID) + '.txt', "w+")
+        f = open(config.TEMP_INDICES_DIR + "/" + str(docID) + '.txt', "w+")
 
         for word in sortedWords:
             fieldString = ""
@@ -77,7 +73,7 @@ class TextProcessor():
         return tokens
 
     def stem(self, tokens):
-        sno = nltk.stem.SnowballStemmer('english')
+        sno = SnowballStemmer('english')
         # porter = PorterStemmer()
         stemmedTokens = [sno.stem(token) for token in tokens]
         return stemmedTokens

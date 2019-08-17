@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 
+import os
 import sys
 import time
+import config
 import xml.sax
 from WikiXMLHandler import WikiXMLHandler
 
@@ -12,6 +14,8 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python3 <path-to-wiki-dump>")
         sys.exit(1)
+
+    os.mkdir(config.TEMP_INDICES_DIR)
 
     xmlFilePath = sys.argv[1]
 
