@@ -58,7 +58,7 @@ class TextProcessor():
                 fieldString += 'r' + str(fieldCount[4])
             if fieldCount[5] >  0:
                 fieldString += 'e' + str(fieldCount[5])        
-            f.write(word + ':' + str(totalCount) + 'd' + str(docID) + fieldString + '\n')
+            f.write(word + '-' + str(totalCount) + 'd' + str(docID) + fieldString + '\n')
         
         f.close()
         self.wordCount = {}
