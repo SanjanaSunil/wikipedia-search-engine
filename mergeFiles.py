@@ -11,11 +11,14 @@ def kWayMerge(files, op_file):
 
     while(heap):
         smallest = heapq.heappop(heap)
-        cur_word = smallest[0].split(':', 1)[0]
+        [cur_word, field_count] = smallest[0].split(':', 1)
         if cur_word == prev_word:
-            op_file.write('|' + smallest[0])
+            op_file.write('|' + field_count.strip("\n"))
         else:
-            op_file.write(smallest[0])
+            if len(prev_word) == 0:
+                op_file.write(smallest[0].strip("\n"))
+            else:
+                op_file.write('\n' + smallest[0].strip("\n"))
         prev_word = cur_word
         next_line = smallest[1].readline()
         if len(next_line) != 0:
@@ -27,7 +30,7 @@ if __name__ == "__main__":
     op_file = open('output.txt', "w+") 
 
     files = []
-    for i in range(0, 2):
+    for i in range(0, 999):
         files.append(open(config.TEMP_INDICES_DIR + '/' + str(i) + '.txt', 'r'))
     
     kWayMerge(files, op_file)
