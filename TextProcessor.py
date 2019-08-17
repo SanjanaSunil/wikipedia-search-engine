@@ -10,8 +10,9 @@ class TextProcessor():
 
     def __init__(self):
         self.wordCount = {}
-        self.stop_words = set(stopwords.words('english'))    
-    
+        self.sno = SnowballStemmer('english')
+        self.stop_words = set(stopwords.words('english'))
+
 
     def processText(self, text, tagType):
         """ Performs case folding, tokenisation and stemming """
@@ -73,9 +74,7 @@ class TextProcessor():
         return tokens
 
     def stem(self, tokens):
-        sno = SnowballStemmer('english')
-        # porter = PorterStemmer()
-        stemmedTokens = [sno.stem(token) for token in tokens]
+        stemmedTokens = [self.sno.stem(token) for token in tokens]
         return stemmedTokens
 
 
