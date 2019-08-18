@@ -40,7 +40,7 @@ class TextProcessor():
     def createIndex(self, docID):
         # print(docID)
         sortedWords = sorted(self.wordCount.keys())
-        f = open(config.TEMP_INDICES_DIR + "/" + str(docID) + '.txt', "w+")
+        f = open(config.TEMP_INDICES_DIR + "/" + str(docID) + '-0.txt', "w+")
 
         for word in sortedWords:
             fieldString = ""

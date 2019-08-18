@@ -30,7 +30,7 @@ if __name__ == "__main__":
     max_files = config.MAX_OPEN_FILES - 10
     cur_dir = config.TEMP_INDICES_DIR
 
-    iter_no = -1
+    iter_no = 0
 
     while True:
 
@@ -45,17 +45,11 @@ if __name__ == "__main__":
 
             for i in range(start, end):
                 try:
-                    if iter_no == -1:
-                        files.append(open(cur_dir + '/' + str(i) + '.txt', 'r'))
-                    else:
-                        files.append(open(cur_dir + '/' + str(i) + '-' + str(iter_no) + '.txt', 'r'))
+                    files.append(open(cur_dir + '/' + str(i) + '-' + str(iter_no) + '.txt', 'r'))
                 except:
                     files_left_flag = 0
                     break
-                if iter_no != -1:
-                    unwanted_files.append(cur_dir + '/' + str(i) + '-' + str(iter_no) + '.txt')
-                else:
-                    unwanted_files.append(cur_dir + '/' + str(i) + '.txt')
+                unwanted_files.append(cur_dir + '/' + str(i) + '-' + str(iter_no) + '.txt')
             
             if len(files) == 0:
                 break
