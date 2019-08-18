@@ -29,9 +29,6 @@ if __name__ == "__main__":
 
     max_files = config.MAX_OPEN_FILES - 10
     cur_dir = config.TEMP_INDICES_DIR
-    os.mkdir('op')
-
-    # ---------------------------------
 
     iter_no = -1
 
@@ -57,11 +54,13 @@ if __name__ == "__main__":
                     break
                 if iter_no != -1:
                     unwanted_files.append(cur_dir + '/' + str(i) + '-' + str(iter_no) + '.txt')
+                else:
+                    unwanted_files.append(cur_dir + '/' + str(i) + '.txt')
             
             if len(files) == 0:
                 break
 
-            op_file = open('op/' + str(new_file_id) + '-' + str(iter_no+1) + '.txt', "w+") 
+            op_file = open(cur_dir + '/' + str(new_file_id) + '-' + str(iter_no+1) + '.txt', "w+") 
             kWayMerge(files, op_file)
             [file__.close() for file__ in files]
             [os.remove(unwanted_file) for unwanted_file in unwanted_files]
@@ -71,8 +70,7 @@ if __name__ == "__main__":
             if files_left_flag == 0:
                 break
         
-        if not os.path.exists('op/1-' + str(iter_no+1) + '.txt'):
+        if not os.path.exists(cur_dir + '/1-' + str(iter_no+1) + '.txt'):
             break
         
-        cur_dir = 'op'
         iter_no += 1
