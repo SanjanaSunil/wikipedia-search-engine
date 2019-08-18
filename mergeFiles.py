@@ -1,15 +1,13 @@
 import os
-import sys
 import heapq
 import config
 
 def kWayMerge(files, op_file):
     heap = []
-    [heapq.heappush(heap, (file__.readline(), file__)) for file__ in files]
-
     prev_word = ""
+    [heapq.heappush(heap, (f.readline(), f)) for f in files]
 
-    while(heap):
+    while heap:
         smallest = heapq.heappop(heap)
         [cur_word, field_count] = smallest[0].split('-', 1)
         if cur_word == prev_word:
@@ -25,7 +23,7 @@ def kWayMerge(files, op_file):
             heapq.heappush(heap, (next_line, smallest[1]))
 
 
-if __name__ == "__main__":
+def externalSort():
 
     max_files = config.MAX_OPEN_FILES - 10
     cur_dir = config.TEMP_INDICES_DIR
@@ -56,7 +54,7 @@ if __name__ == "__main__":
 
             op_file = open(cur_dir + '/' + str(new_file_id) + '-' + str(iter_no+1) + '.txt', "w+") 
             kWayMerge(files, op_file)
-            [file__.close() for file__ in files]
+            [f.close() for f in files]
             [os.remove(unwanted_file) for unwanted_file in unwanted_files]
             new_file_id += 1
             op_file.close()

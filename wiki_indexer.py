@@ -5,6 +5,7 @@ import sys
 import time
 import config
 import xml.sax
+import mergeFiles
 from WikiXMLHandler import WikiXMLHandler
 
 if __name__ == "__main__":
@@ -25,5 +26,7 @@ if __name__ == "__main__":
     parser.setContentHandler(wikiHandler)
 
     parser.parse(xmlFilePath)
+
+    mergeFiles.externalSort()
 
     print("--- %s seconds ---" % (time.time() - start_time))
