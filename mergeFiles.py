@@ -32,12 +32,12 @@ if __name__ == "__main__":
 
     iter_no = 0
 
-    while True:
+    while os.path.exists(cur_dir + '/1-' + str(iter_no) + '.txt'):
 
         new_file_id = 0
         files_left_flag = 1
 
-        while True:
+        while files_left_flag:
             files = []
             unwanted_files = []
             start = new_file_id * max_files
@@ -60,11 +60,5 @@ if __name__ == "__main__":
             [os.remove(unwanted_file) for unwanted_file in unwanted_files]
             new_file_id += 1
             op_file.close()
-
-            if files_left_flag == 0:
-                break
-        
-        if not os.path.exists(cur_dir + '/1-' + str(iter_no+1) + '.txt'):
-            break
         
         iter_no += 1
