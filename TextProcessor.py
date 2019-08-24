@@ -8,6 +8,24 @@ from nltk.stem import WordNetLemmatizer
 
 class TextProcessor():
 
+    """
+    Takes in text, processes it and writes inverted indices to file
+    ...
+
+    Attributes
+    ----------
+    wordCount : dict
+        Maps word to an array of size 6 with count of title, text, infobox,
+        categories, references and external links
+    
+    sno : SnowBallStemmer
+        Stems words
+    
+    stop_words : set
+        Stop words in nltk
+
+    """
+
     def __init__(self):
         self.wordCount = {}
         self.sno = SnowballStemmer('english')
@@ -38,7 +56,7 @@ class TextProcessor():
 
 
     def createIndex(self, docID):
-        # print(docID)
+        """ Creates inverted index """ 
         sortedWords = sorted(self.wordCount.keys())
         f = open(config.TEMP_INDICES_DIR + "/" + str(docID) + '-0.txt', "w+")
 
@@ -70,8 +88,17 @@ class TextProcessor():
         return tokens
 
     def removeStopWords(self, tokens):
-        tokens = [token for token in tokens if not token in self.stop_words and ord(str(token[0])) <= ord('z')]
-        return tokens
+        words = []
+        for token in tokens:
+            if token not in self.stop_words:
+                flag = 0
+                for c in token:
+                    if ord(c) > ord('z'):
+                        flag = 1
+                if flag == 0:
+                    words.append(token)
+        # tokens = [token for token in tokens if not token in self.stop_words and ord(str(token[0])) <= ord('z')]
+        return words
 
     def stem(self, tokens):
         stemmedTokens = [self.sno.stem(token) for token in tokens]

@@ -11,13 +11,26 @@ class WikiXMLHandler(xml.sax.ContentHandler):
 
     Attributes
     ----------
-    currentTag : string
-        Tag being currently processed
-
     docID : int
         New ID of article being processed
 
-    Other attributes store content of the corresponding tag
+    textProcessor: TextProcessor
+        Performs case-folding, tokenisation and stemming and creates inverted index
+
+    Other attributes contain content of corresponding tag
+    e.g. self.title contains title name
+
+    Methods
+    -------
+    startElement()
+        Checks and sets current tag
+    endElement()
+        At the ending of an article, processes text and creates inverted index
+    characters()
+        Checks each line and adds cintent to corresponding tag attributes
+    reset()
+        Resets all tag attributes to empty string
+
     """
 
     def __init__(self):
