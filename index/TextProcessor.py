@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import re
 import config
 from nltk.corpus import stopwords

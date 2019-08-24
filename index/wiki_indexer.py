@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import os
 import sys
 import time
@@ -22,7 +20,9 @@ if __name__ == "__main__":
     parser.setContentHandler(wikiHandler)
 
     parser.parse(xmlFilePath)
-
     mergeFiles.externalSort()
+
+    # inverted_index = os.listdir(config.TEMP_INDICES_DIR)
+    # os.rename(config.TEMP_INDICES_DIR + '/' + inverted_index, config.TEMP_INDICES_DIR + '/' + 'index.txt')
 
     print("--- %s seconds ---" % (time.time() - start_time))
