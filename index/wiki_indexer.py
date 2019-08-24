@@ -12,10 +12,6 @@ if __name__ == "__main__":
     
     start_time = time.time()
 
-    if len(sys.argv) != 2:
-        print("Usage: python3 <path-to-wiki-dump>")
-        sys.exit(1)
-
     os.mkdir(config.TEMP_INDICES_DIR)
 
     xmlFilePath = sys.argv[1]
