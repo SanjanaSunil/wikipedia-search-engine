@@ -26,7 +26,7 @@ def kWayMerge(files, op_file):
 def externalSort():
 
     max_files = config.MAX_OPEN_FILES - 10
-    cur_dir = config.TEMP_INDICES_DIR
+    cur_dir = config.OUTPUT_DIR
 
     iter_no = 0
 

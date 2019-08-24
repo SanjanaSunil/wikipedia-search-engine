@@ -10,9 +10,8 @@ if __name__ == "__main__":
     
     start_time = time.time()
 
-    os.mkdir(config.TEMP_INDICES_DIR)
-
     xmlFilePath = sys.argv[1]
+    config.OUTPUT_DIR = sys.argv[2]
 
     parser = xml.sax.make_parser()
     parser.setFeature(xml.sax.handler.feature_namespaces, 0)
@@ -21,8 +20,5 @@ if __name__ == "__main__":
 
     parser.parse(xmlFilePath)
     mergeFiles.externalSort()
-
-    # inverted_index = os.listdir(config.TEMP_INDICES_DIR)
-    # os.rename(config.TEMP_INDICES_DIR + '/' + inverted_index, config.TEMP_INDICES_DIR + '/' + 'index.txt')
 
     print("--- %s seconds ---" % (time.time() - start_time))
