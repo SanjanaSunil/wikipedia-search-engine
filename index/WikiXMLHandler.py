@@ -31,10 +31,12 @@ class WikiXMLHandler(xml.sax.ContentHandler):
 
     """
 
-    def __init__(self):
+    def __init__(self, output_dir):
         self.textProcessor = TextProcessor()
         self.docID = 0
+        self.output_dir = output_dir
         self.reset()
+
 
     def reset(self):
         self.currentTag = ""
@@ -58,7 +60,7 @@ class WikiXMLHandler(xml.sax.ContentHandler):
             self.textProcessor.processText(self.references, "references")
             self.textProcessor.processText(self.externalLinks, "external_links")
             
-            self.textProcessor.createIndex(self.docID)
+            self.textProcessor.createIndex(self.docID, self.output_dir)
             # del processor
             self.docID += 1
             self.reset()

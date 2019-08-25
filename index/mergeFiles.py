@@ -1,6 +1,6 @@
 import os
 import heapq
-import config
+import resource
 
 def kWayMerge(files, op_file):
     heap = []
@@ -23,10 +23,10 @@ def kWayMerge(files, op_file):
             heapq.heappush(heap, (next_line, smallest[1]))
 
 
-def externalSort():
+def externalSort(output_dir):
 
-    max_files = config.MAX_OPEN_FILES - 10
-    cur_dir = config.OUTPUT_DIR
+    max_files = resource.getrlimit(resource.RLIMIT_NOFILE)[0] - 10
+    cur_dir = output_dir
 
     iter_no = 0
 

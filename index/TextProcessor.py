@@ -1,5 +1,4 @@
 import re
-import config
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
 from nltk.stem import WordNetLemmatizer 
@@ -53,10 +52,10 @@ class TextProcessor():
                 self.wordCount[token][5] += 1
 
 
-    def createIndex(self, docID):
+    def createIndex(self, docID, output_dir):
         """ Creates inverted index """ 
         sortedWords = sorted(self.wordCount.keys())
-        f = open(config.OUTPUT_DIR + "/" + str(docID) + '-0.txt', "w+")
+        f = open(output_dir + "/" + str(docID) + '-0.txt', "w+")
 
         for word in sortedWords:
             fieldString = ""
