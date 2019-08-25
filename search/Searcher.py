@@ -23,13 +23,13 @@ class Searcher():
 
             f.seek(new_mid)
             f.readline()
-            word_offset = f.tell()
+            # word_offset = f.tell()
             line = f.readline()
 
             if not line or line.split('-', 1)[0] > word:
                 r = new_mid - 1
             elif word == line.split('-', 1)[0]:
-                return word_offset
+                return line.rstrip('\n')
             else:
                 l = new_mid
             
@@ -38,17 +38,21 @@ class Searcher():
         f.seek(0)
         line = f.readline()
         if word == line.split('-', 1)[0]:
-            return 0
+            return line.rstrip('\n')
 
-        return -1
+        return ""
 
 
     def processAndSearchQuery(self, query):
         query = query.lower()
         query_tokens = self.stem(self.removeStopWords(self.tokenize(query)))
+        
+        postings_list = []
         f = open(self.inverted_index, 'r')
         for query_token in query_tokens:
-            print(self.binarySearchWord(f, query_token))
+            posting = self.binarySearchWord(f, query_token)
+            if posting != "":
+                postings_list.append(posting)
         f.close()
 
 
