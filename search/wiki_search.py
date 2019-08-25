@@ -7,9 +7,13 @@ if __name__ == '__main__':
     testfile = sys.argv[2]
     path_to_output = sys.argv[3]
 
-    with open(testfile, 'r') as file:
-        queries = file.readlines()
+    with open(testfile, 'r') as f:
+        queries = f.readlines()
 
+    searcher = Searcher(path_to_index)
+    for query in queries:
+        searcher.processAndSearchQuery(query)
+    
     # outputs = []
     # for query in queries:
     #     outputs.append(query)
