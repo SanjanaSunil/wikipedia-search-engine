@@ -5,3 +5,4 @@ if [[ "$#" -ne 3 ]]; then
     exit 2
 fi
 
+python3 search/wiki_search.py $1 $2 $3

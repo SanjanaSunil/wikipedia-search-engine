@@ -67,3 +67,21 @@ def externalSort(output_dir):
             op_file.close()
         
         iter_no += 1
+
+    offsets_file = open(cur_dir + '/offsets.txt', 'w')
+    index_file = open(cur_dir + '/0-' + str(iter_no) + '.txt', 'r')
+
+    start = True
+    while True:
+        pos = str(index_file.tell())
+        line = index_file.readline()
+        if not line:
+            break
+        if start:
+            offsets_file.write(pos)
+            start = False
+        else:
+            offsets_file.write('\n' + pos)
+
+    offsets_file.close()
+    index_file.close()
