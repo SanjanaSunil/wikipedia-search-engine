@@ -5,22 +5,29 @@ import resource
 def kWayMerge(files, op_file):
     heap = []
     prev_word = ""
-    [heapq.heappush(heap, (f.readline(), f)) for f in files]
 
+    for f in files:
+        line = f.readline()
+        [word, word_info] = line.split('-', 1)
+        [docID, field_cnt] = word_info.split('d', 1)
+        heapq.heappush(heap, (word, int(docID), field_cnt, f))
+    
     while heap:
         smallest = heapq.heappop(heap)
-        [cur_word, field_count] = smallest[0].split('-', 1)
-        if cur_word == prev_word:
-            op_file.write('|' + field_count.strip("\n"))
+        if smallest[0] == prev_word:
+            op_file.write('|' + str(smallest[1]) + 'd' + smallest[2].strip("\n"))
         else:
             if len(prev_word) == 0:
-                op_file.write(smallest[0].strip("\n"))
+                op_file.write(smallest[0].strip("\n") + '-' + str(smallest[1]) + 'd' + smallest[2].strip("\n"))
             else:
-                op_file.write('\n' + smallest[0].strip("\n"))
-        prev_word = cur_word
-        next_line = smallest[1].readline()
+                op_file.write('\n' + smallest[0].strip("\n") + '-' + str(smallest[1]) + 'd' + smallest[2].strip("\n"))
+        
+        prev_word = smallest[0]
+        next_line = smallest[3].readline()
         if len(next_line) != 0:
-            heapq.heappush(heap, (next_line, smallest[1]))
+            [word, word_info] = next_line.split('-', 1)
+            [docID, field_cnt] = word_info.split('d', 1)
+            heapq.heappush(heap, (word, int(docID), field_cnt, smallest[3]))
 
 
 def externalSort(output_dir):

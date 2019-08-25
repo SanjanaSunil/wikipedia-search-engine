@@ -34,7 +34,6 @@ class TextProcessor():
         text = text.lower()
         tokens = self.stem(self.removeStopWords(self.tokenize(text)))
         # tokens = self.lemmatize(tokens)
-        
         for token in tokens:
             if token not in self.wordCount:
                 self.wordCount[token] = [0, 0, 0, 0, 0, 0]
@@ -56,7 +55,6 @@ class TextProcessor():
         """ Creates inverted index """ 
         sortedWords = sorted(self.wordCount.keys())
         f = open(output_dir + "/" + str(docID) + '-0.txt', "w+")
-
         for word in sortedWords:
             fieldString = ""
             fieldCount = self.wordCount[word]
@@ -73,8 +71,7 @@ class TextProcessor():
                 fieldString += 'r' + str(fieldCount[4])
             if fieldCount[5] >  0:
                 fieldString += 'e' + str(fieldCount[5])        
-            f.write(word + '-' + str(totalCount) + 'd' + str(docID) + fieldString + '\n')
-        
+            f.write(word + '-' + str(docID) + 'd' + str(totalCount) + fieldString + '\n')     
         f.close()
         self.wordCount = {}
 
