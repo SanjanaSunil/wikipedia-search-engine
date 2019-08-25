@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ "$#" -ne 2 ]]; then
-    echo "Usage: ./index.sh <path-to-wiki-dump> <path_to_index_folder>"
+    echo "Usage: ./index.sh <path_to_wiki_dump> <path_to_index_folder>"
     exit 2
 fi
 
