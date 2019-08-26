@@ -92,7 +92,7 @@ class Searcher():
                 heapq.heappush(heap, (docID, field_cnt))
         f.close()
         
-        print(self.getTopNResults(heap, 10))
+        return self.getTopNResults(heap, 10)
 
 
     def tokenize(self, text):

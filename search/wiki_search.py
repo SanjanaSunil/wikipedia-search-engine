@@ -1,7 +1,10 @@
 import sys
+import time
 from Searcher import Searcher
 
 if __name__ == '__main__':
+
+    start_time = time.time()
 
     path_to_index = sys.argv[1]
     testfile = sys.argv[2]
@@ -10,22 +13,15 @@ if __name__ == '__main__':
     with open(testfile, 'r') as f:
         queries = f.readlines()
 
+    outputs = []
     searcher = Searcher(path_to_index)
     for query in queries:
-        searcher.processAndSearchQuery(query)
-    # outputs = []
-    # for query in queries:
-    #     outputs.append(query)
-    # write_file(outputs, path_to_output)
-
-
-
-def write_file(outputs, path_to_output):
-    '''outputs should be a list of lists.
-        len(outputs) = number of queries
-        Each element in outputs should be a list of titles corresponding to a particular query.'''
-    with open(path_to_output, 'w') as file:
+        outputs.append(searcher.processAndSearchQuery(query))
+    
+    with open(path_to_output, 'w') as f:
         for output in outputs:
             for line in output:
-                file.write(line.strip() + '\n')
-            file.write('\n')
+                f.write(line.strip() + '\n')
+            f.write('\n')
+    
+    print("--- %s seconds ---" % (time.time() - start_time))
