@@ -27,10 +27,13 @@ class TextProcessor():
         self.wordCount = {}
         self.sno = SnowballStemmer('english')
         self.stop_words = set(stopwords.words('english'))
+        self.title = ""
 
 
     def processText(self, text, tagType):
         """ Performs case folding, tokenisation and stemming """
+        if tagType == "title":
+            self.title = text.rstrip().rstrip('\n')
         text = text.lower()
         tokens = self.stem(self.removeStopWords(self.tokenize(text)))
         # tokens = self.lemmatize(tokens)
@@ -74,6 +77,12 @@ class TextProcessor():
             f.write(word + '-' + str(docID) + 'd' + str(totalCount) + fieldString + '\n')     
         f.close()
         self.wordCount = {}
+        f = open(output_dir + "/titles.txt", "a+")
+        if docID == 0:
+            f.write(str(docID) + ':' + self.title)
+        else:
+            f.write('\n' + str(docID) + ':' + self.title)
+        f.close()
 
 
     def tokenize(self, text):
