@@ -13,8 +13,7 @@ class Searcher():
         self.titles = os.path.join(path_to_index, 'titles.txt')
     
 
-    def binarySearchWord(self, f, word, inp_type):
-        
+    def binarySearchWord(self, f, word, inp_type): 
         f.seek(0, 2)
         l = 0 
         r = f.tell() - 1
@@ -26,7 +25,6 @@ class Searcher():
 
             f.seek(new_mid)
             f.readline()
-            # word_offset = f.tell()
             line = f.readline()
 
             doc_word = line.split('-', 1)[0]
@@ -36,7 +34,7 @@ class Searcher():
             if not line or doc_word > word:
                 r = new_mid - 1
             elif word == doc_word:
-                return line.rstrip('\n')
+                return line.rstrip('\n').split('-', 1)[1]
             else:
                 l = new_mid
             
@@ -45,7 +43,7 @@ class Searcher():
         f.seek(0)
         line = f.readline()
         if word == line.split('-', 1)[0]:
-            return line.rstrip('\n')
+            return line.rstrip('\n').split('-', 1)[1]
 
         return ""
 
@@ -90,12 +88,11 @@ class Searcher():
         for query_token in query_tokens:
             posting = self.binarySearchWord(f, query_token, "string")
             if posting != "":
-                [_, word_info] = posting.split('-', 1)
-                [docID, field_cnt] = word_info.split('d', 1) 
+                [docID, field_cnt] = posting.split('d', 1) 
                 heapq.heappush(heap, (docID, field_cnt))
         f.close()
         
-        print(self.getTopNResults(heap, 5))
+        print(self.getTopNResults(heap, 10))
 
 
     def tokenize(self, text):
