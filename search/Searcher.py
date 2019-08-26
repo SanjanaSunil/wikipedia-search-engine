@@ -1,5 +1,6 @@
 import os
 import re
+import heapq
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
 
@@ -8,10 +9,12 @@ class Searcher():
     def __init__(self, path_to_index):
         self.sno = SnowballStemmer('english')
         self.stop_words = set(stopwords.words('english'))
-        self.inverted_index = os.path.join(path_to_index, os.listdir(path_to_index)[0])    
+        self.inverted_index = os.path.join(path_to_index, 'inverted_index.txt')
+        self.titles = os.path.join(path_to_index, 'titles.txt')
     
 
-    def binarySearchWord(self, f, word):
+    def binarySearchWord(self, f, word, inp_type):
+        
         f.seek(0, 2)
         l = 0 
         r = f.tell() - 1
@@ -26,9 +29,13 @@ class Searcher():
             # word_offset = f.tell()
             line = f.readline()
 
-            if not line or line.split('-', 1)[0] > word:
+            doc_word = line.split('-', 1)[0]
+            if inp_type == "integer":
+                doc_word = int(doc_word)
+        
+            if not line or doc_word > word:
                 r = new_mid - 1
-            elif word == line.split('-', 1)[0]:
+            elif word == doc_word:
                 return line.rstrip('\n')
             else:
                 l = new_mid
@@ -43,17 +50,52 @@ class Searcher():
         return ""
 
 
+    def getTopNResults(self, docID_heap, n):
+        prev_docID = "-1"
+        cnt = 0
+        cnt_heap = []
+
+        while docID_heap:
+            smallest = heapq.heappop(docID_heap)
+            next_info = smallest[1].split('|', 1)
+            if len(next_info) > 1:
+                [docID, field_cnt] = next_info[1].split('d', 1)
+                heapq.heappush(docID_heap, (docID, field_cnt))
+            if smallest[0] == prev_docID:
+                cnt += 1
+            else:
+                heapq.heappush(cnt_heap, (-1*cnt, prev_docID))
+                prev_docID = smallest[0]
+                cnt = 1
+        
+        if cnt > 0:
+            heapq.heappush(cnt_heap, (-cnt, prev_docID))
+        
+        results = []
+        f = open(self.titles, 'r')
+        while cnt_heap and n:
+            smallest = heapq.heappop(cnt_heap)
+            results.append(self.binarySearchWord(f, int(smallest[1].rstrip()), "integer"))
+            n -= 1
+        f.close()
+        return results
+
+
     def processAndSearchQuery(self, query):
         query = query.lower()
         query_tokens = self.stem(self.removeStopWords(self.tokenize(query)))
         
-        postings_list = []
+        heap = []
         f = open(self.inverted_index, 'r')
         for query_token in query_tokens:
-            posting = self.binarySearchWord(f, query_token)
+            posting = self.binarySearchWord(f, query_token, "string")
             if posting != "":
-                postings_list.append(posting)
+                [_, word_info] = posting.split('-', 1)
+                [docID, field_cnt] = word_info.split('d', 1) 
+                heapq.heappush(heap, (docID, field_cnt))
         f.close()
+        
+        print(self.getTopNResults(heap, 5))
 
 
     def tokenize(self, text):

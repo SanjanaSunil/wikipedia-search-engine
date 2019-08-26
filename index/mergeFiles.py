@@ -67,3 +67,7 @@ def externalSort(output_dir):
             op_file.close()
         
         iter_no += 1
+    
+    src = os.path.join(cur_dir, '0-' + str(iter_no) + '.txt')
+    dest = os.path.join(cur_dir, 'inverted_index.txt')
+    os.rename(src, dest)

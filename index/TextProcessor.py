@@ -79,9 +79,9 @@ class TextProcessor():
         self.wordCount = {}
         f = open(output_dir + "/titles.txt", "a+")
         if docID == 0:
-            f.write(str(docID) + ':' + self.title)
+            f.write(str(docID) + '-' + self.title)
         else:
-            f.write('\n' + str(docID) + ':' + self.title)
+            f.write('\n' + str(docID) + '-' + self.title)
         f.close()
 
 
