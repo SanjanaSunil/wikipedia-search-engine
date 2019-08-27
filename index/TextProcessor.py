@@ -57,7 +57,7 @@ class TextProcessor():
     def createIndex(self, docID, output_dir):
         """ Creates inverted index """ 
         sortedWords = sorted(self.wordCount.keys())
-        f = open(output_dir + "/" + str(docID) + '-0.txt', "w+")
+        f = open(output_dir + "/" + str(docID) + '-0.txt', "w+", encoding='utf-8')
         for word in sortedWords:
             fieldString = ""
             fieldCount = self.wordCount[word]
@@ -77,7 +77,7 @@ class TextProcessor():
             f.write(word + '-' + str(docID) + 'd' + str(totalCount) + fieldString + '\n')     
         f.close()
         self.wordCount = {}
-        f = open(output_dir + "/titles.txt", "a+")
+        f = open(output_dir + "/titles.txt", "a+", encoding='utf-8')
         if docID == 0:
             f.write(str(docID) + '-' + self.title)
         else:

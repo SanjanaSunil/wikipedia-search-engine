@@ -50,7 +50,7 @@ def externalSort(output_dir):
 
             for i in range(start, end):
                 try:
-                    files.append(open(cur_dir + '/' + str(i) + '-' + str(iter_no) + '.txt', 'r'))
+                    files.append(open(cur_dir + '/' + str(i) + '-' + str(iter_no) + '.txt', encoding='utf-8', errors='ignore'))
                 except:
                     files_left_flag = 0
                     break
@@ -59,7 +59,7 @@ def externalSort(output_dir):
             if len(files) == 0:
                 break
 
-            op_file = open(cur_dir + '/' + str(new_file_id) + '-' + str(iter_no+1) + '.txt', "w+") 
+            op_file = open(cur_dir + '/' + str(new_file_id) + '-' + str(iter_no+1) + '.txt', "w+", encoding='utf-8') 
             kWayMerge(files, op_file)
             [f.close() for f in files]
             [os.remove(unwanted_file) for unwanted_file in unwanted_files]

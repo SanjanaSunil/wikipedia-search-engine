@@ -70,7 +70,7 @@ class Searcher():
             heapq.heappush(cnt_heap, (-cnt, prev_docID))
         
         results = []
-        f = open(self.titles, 'r')
+        f = open(self.titles, encoding="utf8", errors='ignore')
         while cnt_heap and n:
             smallest = heapq.heappop(cnt_heap)
             results.append(self.binarySearchWord(f, int(smallest[1].rstrip()), "integer"))
@@ -84,7 +84,7 @@ class Searcher():
         query_tokens = self.stem(self.removeStopWords(self.tokenize(query)))
         
         heap = []
-        f = open(self.inverted_index, 'r')
+        f = open(self.inverted_index, encoding="utf8", errors='ignore')
         for query_token in query_tokens:
             posting = self.binarySearchWord(f, query_token, "string")
             if posting != "":
