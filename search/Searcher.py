@@ -49,7 +49,7 @@ class Searcher():
 
 
     def getTopNResults(self, docID_heap, n):
-        prev_docID = "-1"
+        prev_docID = -1
         cnt = 0
         cnt_heap = []
 
@@ -58,13 +58,13 @@ class Searcher():
             next_info = smallest[1].split('|', 1)
             if len(next_info) > 1:
                 [docID, field_cnt] = next_info[1].split('d', 1)
-                heapq.heappush(docID_heap, (docID, field_cnt))
+                heapq.heappush(docID_heap, (int(docID), field_cnt))
             if smallest[0] == prev_docID:
-                cnt += 1
+                cnt *= int(re.search(r'\d+', smallest[1]).group())
             else:
-                heapq.heappush(cnt_heap, (-1*cnt, prev_docID))
+                heapq.heappush(cnt_heap, (-cnt, prev_docID))
                 prev_docID = smallest[0]
-                cnt = 1
+                cnt = int(re.search(r'\d+', smallest[1]).group())
         
         if cnt > 0:
             heapq.heappush(cnt_heap, (-cnt, prev_docID))
@@ -73,7 +73,7 @@ class Searcher():
         f = open(self.titles, encoding="utf8", errors='ignore')
         while cnt_heap and n:
             smallest = heapq.heappop(cnt_heap)
-            results.append(self.binarySearchWord(f, int(smallest[1].rstrip()), "integer"))
+            results.append(self.binarySearchWord(f, smallest[1], "integer"))
             n -= 1
         f.close()
         return results
@@ -89,7 +89,7 @@ class Searcher():
             posting = self.binarySearchWord(f, query_token, "string")
             if posting != "":
                 [docID, field_cnt] = posting.split('d', 1) 
-                heapq.heappush(heap, (docID, field_cnt))
+                heapq.heappush(heap, (int(docID), field_cnt))
         f.close()
         
         return self.getTopNResults(heap, 10)
