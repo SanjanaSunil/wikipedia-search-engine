@@ -73,7 +73,9 @@ class Searcher():
         f = open(self.titles, encoding="utf8", errors='ignore')
         while cnt_heap and n:
             smallest = heapq.heappop(cnt_heap)
-            results.append(self.binarySearchWord(f, smallest[1], "integer"))
+            result = self.binarySearchWord(f, smallest[1], "integer")
+            if result.rstrip() != "":
+                results.append(result)
             n -= 1
         f.close()
         return results
