@@ -61,8 +61,12 @@ class Searcher():
                 heapq.heappush(docID_heap, (int(docID), field_cnt, smallest[2]))
             if smallest[0] == prev_docID:
                 if smallest[2] == '-':
+                    if cnt == 0:
+                        cnt = 1
                     cnt *= sum([int(i) for i in re.findall(r'\d+', next_info[0])])
                 elif smallest[2][0] in next_info[0]:
+                    if cnt == 0:
+                        cnt = 1
                     _, rest = next_info[0].split(smallest[2][0])
                     cnt *= int(re.search(r'\d+', rest).group())
             else:
@@ -72,9 +76,9 @@ class Searcher():
                     cnt = sum([int(i) for i in re.findall(r'\d+', next_info[0])])
                 elif smallest[2][0] in next_info[0]:
                     _, rest = next_info[0].split(smallest[2][0])
-                    cnt *= int(re.search(r'\d+', rest).group())
+                    cnt = int(re.search(r'\d+', rest).group())
                 else:
-                    cnt = 1
+                    cnt = 0
         
         if cnt > 0:
             heapq.heappush(cnt_heap, (-cnt, prev_docID))
