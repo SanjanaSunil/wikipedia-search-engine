@@ -60,11 +60,11 @@ class Searcher():
                 [docID, field_cnt] = next_info[1].split('d', 1)
                 heapq.heappush(docID_heap, (int(docID), field_cnt))
             if smallest[0] == prev_docID:
-                cnt *= int(re.search(r'\d+', smallest[1]).group())
+                cnt *= sum([int(i) for i in re.findall(r'\d+', next_info[0])])
             else:
                 heapq.heappush(cnt_heap, (-cnt, prev_docID))
                 prev_docID = smallest[0]
-                cnt = int(re.search(r'\d+', smallest[1]).group())
+                cnt = sum([int(i) for i in re.findall(r'\d+', next_info[0])])
         
         if cnt > 0:
             heapq.heappush(cnt_heap, (-cnt, prev_docID))
