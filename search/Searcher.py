@@ -68,7 +68,7 @@ class Searcher():
                     if cnt == 0:
                         cnt = 1
                     _, rest = next_info[0].split(smallest[2][0])
-                    cnt *= int(re.search(r'\d+', rest).group())
+                    cnt *= (int(re.search(r'\d+', rest).group()) + 1)
             else:
                 heapq.heappush(cnt_heap, (-cnt, prev_docID))
                 prev_docID = smallest[0]
