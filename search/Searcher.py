@@ -58,13 +58,23 @@ class Searcher():
             next_info = smallest[1].split('|', 1)
             if len(next_info) > 1:
                 [docID, field_cnt] = next_info[1].split('d', 1)
-                heapq.heappush(docID_heap, (int(docID), field_cnt))
+                heapq.heappush(docID_heap, (int(docID), field_cnt, smallest[2]))
             if smallest[0] == prev_docID:
-                cnt *= sum([int(i) for i in re.findall(r'\d+', next_info[0])])
+                if smallest[2] == '-':
+                    cnt *= sum([int(i) for i in re.findall(r'\d+', next_info[0])])
+                elif smallest[2][0] in next_info[0]:
+                    _, rest = next_info[0].split(smallest[2][0])
+                    cnt *= int(re.search(r'\d+', rest).group())
             else:
                 heapq.heappush(cnt_heap, (-cnt, prev_docID))
                 prev_docID = smallest[0]
-                cnt = sum([int(i) for i in re.findall(r'\d+', next_info[0])])
+                if smallest[2] == '-':
+                    cnt = sum([int(i) for i in re.findall(r'\d+', next_info[0])])
+                elif smallest[2][0] in next_info[0]:
+                    _, rest = next_info[0].split(smallest[2][0])
+                    cnt *= int(re.search(r'\d+', rest).group())
+                else:
+                    cnt = 1
         
         if cnt > 0:
             heapq.heappush(cnt_heap, (-cnt, prev_docID))
@@ -84,14 +94,14 @@ class Searcher():
     def processAndSearchQuery(self, query):
         query = query.lower()
         query_tokens = self.stem(self.removeStopWords(self.tokenize(query)))
-        
+
         heap = []
         f = open(self.inverted_index, encoding="utf8", errors='ignore')
         for query_token in query_tokens:
-            posting = self.binarySearchWord(f, query_token, "string")
+            posting = self.binarySearchWord(f, query_token[0], "string")
             if posting != "":
                 [docID, field_cnt] = posting.split('d', 1) 
-                heapq.heappush(heap, (int(docID), field_cnt))
+                heapq.heappush(heap, (int(docID), field_cnt, query_token[1]))
         f.close()
         
         return self.getTopNResults(heap, 10)
@@ -99,15 +109,22 @@ class Searcher():
 
     def tokenize(self, text):
         text = text.replace("'", "").replace("_", "")
-        tokens = re.findall(r"[\w']{3,}", text)
+        tokens = re.findall(r"[\w':]{3,}", text)
+        tokensAndFields = []
+        for token in tokens:
+            tokenAndField = token.split(':', 1)
+            if len(tokenAndField) == 1:
+                tokensAndFields.append([tokenAndField[0], '-'])
+            else:
+                tokensAndFields.append([tokenAndField[1], tokenAndField[0]])
+        return tokensAndFields
+
+
+    def removeStopWords(self, tokensAndFields):
+        tokens = [token for token in tokensAndFields if not token[0] in self.stop_words]
         return tokens
 
 
-    def removeStopWords(self, tokens):
-        tokens = [token for token in tokens if not token in self.stop_words]
-        return tokens
-
-
-    def stem(self, tokens):
-        stemmedTokens = [self.sno.stem(token) for token in tokens]
+    def stem(self, tokensAndFields):
+        stemmedTokens = [[self.sno.stem(token[0]), token[1]] for token in tokensAndFields]
         return stemmedTokens
