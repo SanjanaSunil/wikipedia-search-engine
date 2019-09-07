@@ -11,6 +11,10 @@ class Searcher():
         self.stop_words = set(stopwords.words('english'))
         self.inverted_index = os.path.join(path_to_index, 'inverted_index.txt')
         self.titles = os.path.join(path_to_index, 'titles.txt')
+
+        f = open(os.path.join(path_to_index, 'extra.txt'), "r")
+        self.total_docs = int(f.readline())
+        f.close()
     
 
     def binarySearchWord(self, f, word, inp_type): 

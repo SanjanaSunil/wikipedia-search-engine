@@ -36,6 +36,7 @@ def externalSort(output_dir):
     cur_dir = output_dir
 
     iter_no = 0
+    total_docs = 0
 
     while os.path.exists(cur_dir + '/1-' + str(iter_no) + '.txt'):
 
@@ -50,6 +51,7 @@ def externalSort(output_dir):
 
             for i in range(start, end):
                 try:
+                    total_docs = max(total_docs, i)
                     files.append(open(cur_dir + '/' + str(i) + '-' + str(iter_no) + '.txt', encoding='utf-8', errors='ignore'))
                 except:
                     files_left_flag = 0
@@ -71,3 +73,7 @@ def externalSort(output_dir):
     src = os.path.join(cur_dir, '0-' + str(iter_no) + '.txt')
     dest = os.path.join(cur_dir, 'inverted_index.txt')
     os.rename(src, dest)
+
+    extra_file = open(os.path.join(cur_dir, 'extra.txt'), "w+")
+    extra_file.write(str(total_docs))
+    extra_file.close()
