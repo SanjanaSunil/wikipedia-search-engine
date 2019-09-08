@@ -112,7 +112,7 @@ class Searcher():
                 docs_vectors[docID] = [0] * len(query_vector)
             docs_vectors[docID][query_idx] = tf * idf
 
-        query_vector[query_idx] = idf
+        query_vector[query_idx] *= idf
 
 
     def calculateCosineSim(self, query_vector, doc_vector):
@@ -125,26 +125,62 @@ class Searcher():
         return dot_prod/(query_dist*doc_dist)
 
 
+    def getRankedResults(self, query_vector, docs_vectors, n):
+        ranked_docs = []
+        heap = []
+        for docID in docs_vectors:
+            heapq.heappush(heap, (-self.calculateCosineSim(query_vector,docs_vectors[docID]), int(docID)))
+
+        f = open(self.titles, encoding="utf8", errors='ignore')
+        while heap and n > 0:
+            smallest = heapq.heappop(heap)
+            ranked_docs.append(self.binarySearchWord(f, smallest[1], "integer"))
+            n -= 1
+        f.close()
+
+        return ranked_docs
+
+
+    def getDuplicateCount(self, query_tokens):
+        uniq_tokens = []
+        query_vector = []
+        for query_token in query_tokens:
+            flag = -1
+            for j, uniq_token in enumerate(uniq_tokens):
+                if query_token == uniq_token:
+                    flag = j
+                    break
+            if flag == -1:
+                uniq_tokens.append(query_token)
+                query_vector.append(1)
+            else:
+                query_vector[j] += 1
+        return uniq_tokens, query_vector
+
+
     def processAndSearchQuery(self, query):
         query = query.lower()
         query_tokens = self.stem(self.removeStopWords(self.tokenize(query)))
-        
-        query_vector = [0] * len(query_tokens)
+
+        query_tokens, query_vector = self.getDuplicateCount(query_tokens)
         docs_vectors = {}
         heap = []
+
         f = open(self.inverted_index, encoding="utf8", errors='ignore')
         for i, query_token in enumerate(query_tokens):
             posting = self.binarySearchWord(f, query_token[0], "string")
-            self.calculateTFIDF(query_vector, docs_vectors, posting, i)
             if posting != "":
-                [docID, field_cnt] = posting.split('d', 1) 
-                heapq.heappush(heap, (int(docID), field_cnt, query_token[1]))
+                if len(query_tokens) == 1:
+                    [docID, field_cnt] = posting.split('d', 1) 
+                    heapq.heappush(heap, (int(docID), field_cnt, query_token[1]))
+                else:
+                    self.calculateTFIDF(query_vector, docs_vectors, posting, i)
         f.close()
-        
-        for docID in docs_vectors:
-            print(docID, " ", self.calculateCosineSim(query_vector, docs_vectors[docID]))
 
-        return self.getTopNResults(heap, 10)
+        if len(query_tokens) == 1:
+            return self.getTopNResults(heap, 10)
+        else:
+            return self.getRankedResults(query_vector, docs_vectors, 10)
 
 
     def tokenize(self, text):
