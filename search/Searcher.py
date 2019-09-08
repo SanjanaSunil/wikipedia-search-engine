@@ -1,5 +1,6 @@
 import os
 import re
+import math
 import heapq
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
@@ -99,19 +100,50 @@ class Searcher():
         return results
 
 
+    def calculateTFIDF(self, query_vector, docs_vectors, posting, query_idx):
+        docs_info = posting.split('|')
+        total_doc_words = len(docs_info)
+        idf = math.log10(self.total_docs/total_doc_words)
+
+        for info in docs_info:
+            [docID, field_cnt] = info.split('d', 1)
+            tf = sum([int(i) for i in re.findall(r'\d+', field_cnt)])
+            if docID not in docs_vectors:
+                docs_vectors[docID] = [0] * len(query_vector)
+            docs_vectors[docID][query_idx] = tf * idf
+
+        query_vector[query_idx] = idf
+
+
+    def calculateCosineSim(self, query_vector, doc_vector):
+        dot_prod = 0
+        for i in range(len(query_vector)):
+            dot_prod += (query_vector[i] * doc_vector[i])
+        
+        query_dist = math.sqrt(sum(map(lambda x:x*x, query_vector)))
+        doc_dist = math.sqrt(sum(map(lambda x:x*x, doc_vector)))
+        return dot_prod/(query_dist*doc_dist)
+
+
     def processAndSearchQuery(self, query):
         query = query.lower()
         query_tokens = self.stem(self.removeStopWords(self.tokenize(query)))
-
+        
+        query_vector = [0] * len(query_tokens)
+        docs_vectors = {}
         heap = []
         f = open(self.inverted_index, encoding="utf8", errors='ignore')
-        for query_token in query_tokens:
+        for i, query_token in enumerate(query_tokens):
             posting = self.binarySearchWord(f, query_token[0], "string")
+            self.calculateTFIDF(query_vector, docs_vectors, posting, i)
             if posting != "":
                 [docID, field_cnt] = posting.split('d', 1) 
                 heapq.heappush(heap, (int(docID), field_cnt, query_token[1]))
         f.close()
         
+        for docID in docs_vectors:
+            print(docID, " ", self.calculateCosineSim(query_vector, docs_vectors[docID]))
+
         return self.getTopNResults(heap, 10)
 
 
