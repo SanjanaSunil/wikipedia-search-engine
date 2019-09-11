@@ -100,17 +100,33 @@ class Searcher():
         return results
 
 
-    def calculateTFIDF(self, query_vector, docs_vectors, posting, query_idx):
+    def calculateTFIDF(self, query_vector, docs_vectors, posting, query_idx, field):
         docs_info = posting.split('|')
-        total_doc_words = len(docs_info)
+        total_doc_words = 0
+        if field == '-':
+            total_doc_words = len(docs_info)
+        else:
+            for info in docs_info:
+                if field[0] in info:
+                    total_doc_words += 1        
+        if total_doc_words == 0:
+            return
+            
         idf = math.log10(self.total_docs/total_doc_words)
 
         for info in docs_info:
             [docID, field_cnt] = info.split('d', 1)
-            tf = sum([int(i) for i in re.findall(r'\d+', field_cnt)])
-            if docID not in docs_vectors:
-                docs_vectors[docID] = [0] * len(query_vector)
-            docs_vectors[docID][query_idx] = tf * idf
+            tf = 0
+            if field == '-':
+                tf = sum([int(i) for i in re.findall(r'\d+', field_cnt)])
+            else:
+                field_info = field_cnt.split(field[0])
+                if len(field_info) > 1:
+                    tf = int(re.search(r'\d+', field_info[1]).group())
+            if tf != 0:
+                if docID not in docs_vectors:
+                    docs_vectors[docID] = [0] * len(query_vector)
+                docs_vectors[docID][query_idx] = tf * idf
 
         query_vector[query_idx] *= idf
 
@@ -174,7 +190,7 @@ class Searcher():
                     [docID, field_cnt] = posting.split('d', 1) 
                     heapq.heappush(heap, (int(docID), field_cnt, query_token[1]))
                 else:
-                    self.calculateTFIDF(query_vector, docs_vectors, posting, i)
+                    self.calculateTFIDF(query_vector, docs_vectors, posting, i, query_token[1])
         f.close()
 
         if len(query_tokens) == 1:
