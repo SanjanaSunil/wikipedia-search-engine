@@ -26,8 +26,10 @@ class TextProcessor():
     def __init__(self):
         self.wordCount = {}
         self.sno = SnowballStemmer('english')
+        self.lemmatizer = WordNetLemmatizer()
         self.stop_words = set(stopwords.words('english'))
         self.title = ""
+        self.nltk_cache = {}
 
 
     def processText(self, text, tagType):
@@ -103,11 +105,21 @@ class TextProcessor():
         return words
 
     def stem(self, tokens):
-        stemmedTokens = [self.sno.stem(token) for token in tokens]
+        stemmedTokens = []
+        for token in tokens:
+            if token not in self.nltk_cache:
+                self.nltk_cache[token] = [0, self.sno.stem(token)]
+            stemmedTokens.append(self.nltk_cache[token][1])
+            self.nltk_cache[token][0] += 1
+
+        if len(self.nltk_cache) > 10000:
+            delete_list = sorted(self.nltk_cache.items(), key=lambda x: x[1][0])[:1000]
+            for delete_word in delete_list:
+                del self.nltk_cache[delete_word[0]]
+
         return stemmedTokens
 
 
     def lemmatize(self, tokens):
-        lemmatizer = WordNetLemmatizer()
-        lemmatizedTokens = [lemmatizer.lemmatize(token) for token in tokens]
+        lemmatizedTokens = [self.lemmatizer.lemmatize(token) for token in tokens]
         return lemmatizedTokens
