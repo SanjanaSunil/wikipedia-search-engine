@@ -35,7 +35,7 @@ def externalSort(output_dir):
     max_files = resource.getrlimit(resource.RLIMIT_NOFILE)[0] - 10
     cur_dir = output_dir
 
-    iter_no = 0
+    iter_no = 1
     total_docs = 0
 
     while os.path.exists(cur_dir + '/1-' + str(iter_no) + '.txt'):

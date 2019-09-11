@@ -1,4 +1,7 @@
 import xml.sax
+import os
+import resource
+import mergeFiles
 import xml.etree.ElementTree as etree
 from TextProcessor import TextProcessor
 
@@ -9,6 +12,8 @@ class WikiXMLParser():
         self.docID = 0
         self.output_dir = output_dir
         self.xml_file = xml_file
+        self.MAX_OPEN_FILES = resource.getrlimit(resource.RLIMIT_NOFILE)[0] - 20
+        self.new_merge = 0
         self.reset()
     
 
@@ -45,8 +50,34 @@ class WikiXMLParser():
                     self.docID += 1
                     self.reset()
 
+                    if self.docID % self.MAX_OPEN_FILES == 0 and self.docID > 0:
+                        self.mergeInitialFiles()
+
                 elem.clear()
     
+        self.mergeInitialFiles()      
+
+    
+    def mergeInitialFiles(self):
+        start = self.new_merge * self.MAX_OPEN_FILES
+        end = self.docID
+        if end <= start:
+            return
+
+        files = []
+        unwanted_files = []
+        for i in range(start, end):
+            files.append(open(self.output_dir + '/' + str(i) + '-0.txt', encoding='utf-8', errors='ignore'))
+            unwanted_files.append(self.output_dir + '/' + str(i) + '-0.txt')
+        
+        op_file = open(self.output_dir + '/' + str(self.new_merge) + '-1.txt', "w+", encoding='utf-8')
+        mergeFiles.kWayMerge(files, op_file)
+
+        [f.close() for f in files]
+        [os.remove(unwanted_file) for unwanted_file in unwanted_files]
+        self.new_merge += 1
+        op_file.close()
+
 
     def get_fields(self, content):
         if "[[Category:" in content or "[[category:" in content:
