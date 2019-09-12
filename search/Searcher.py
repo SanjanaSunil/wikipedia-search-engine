@@ -147,8 +147,6 @@ class Searcher():
             tf = 0
             if field == '-':
                 tf = sum([int(i) for i in re.findall(r'\d+', field_cnt)])
-                if 't' in field_cnt:
-                    tf *= 20
             else:
                 field_info = field_cnt.split(field[0])
                 if len(field_info) > 1:
