@@ -40,7 +40,7 @@ class Searcher():
             else:
                 r = mid - 1
 
-        if ans == -1 or self.inverted_indices[ans] > word:
+        if ans == -1 or ans >= len(self.inverted_indices) or self.inverted_indices[ans] > word:
             return ""        
         return self.inverted_indices[ans]
 
