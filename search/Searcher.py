@@ -88,16 +88,14 @@ class Searcher():
         if cnt > 0:
             heapq.heappush(cnt_heap, (-cnt, prev_docID))
         
-        results = []
         f = open(self.titles, encoding="utf8", errors='ignore')
         while cnt_heap and n:
             smallest = heapq.heappop(cnt_heap)
             result = self.binarySearchWord(f, smallest[1], "integer")
             if result.rstrip() != "":
-                results.append(result)
+                print(result)
             n -= 1
         f.close()
-        return results
 
 
     def calculateTFIDF(self, query_vector, docs_vectors, posting, query_idx, field):
@@ -142,7 +140,6 @@ class Searcher():
 
 
     def getRankedResults(self, query_vector, docs_vectors, n):
-        ranked_docs = []
         heap = []
         for docID in docs_vectors:
             heapq.heappush(heap, (-self.calculateCosineSim(query_vector,docs_vectors[docID]), int(docID)))
@@ -150,11 +147,9 @@ class Searcher():
         f = open(self.titles, encoding="utf8", errors='ignore')
         while heap and n > 0:
             smallest = heapq.heappop(heap)
-            ranked_docs.append(self.binarySearchWord(f, smallest[1], "integer"))
+            print(self.binarySearchWord(f, smallest[1], "integer"))
             n -= 1
         f.close()
-
-        return ranked_docs
 
 
     def getDuplicateCount(self, query_tokens):
@@ -194,9 +189,9 @@ class Searcher():
         f.close()
 
         if len(query_tokens) == 1:
-            return self.getTopNResults(heap, 10)
+            self.getTopNResults(heap, 10)
         else:
-            return self.getRankedResults(query_vector, docs_vectors, 10)
+            self.getRankedResults(query_vector, docs_vectors, 10)
 
 
     def tokenize(self, text):
