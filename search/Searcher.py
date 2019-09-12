@@ -160,10 +160,7 @@ class Searcher():
         dot_prod = 0
         for i in range(len(query_vector)):
             dot_prod += (query_vector[i] * doc_vector[i])
-        
-        query_dist = math.sqrt(sum(map(lambda x:x*x, query_vector)))
-        doc_dist = math.sqrt(sum(map(lambda x:x*x, doc_vector)))
-        return dot_prod/(query_dist*doc_dist)
+        return dot_prod
 
 
     def getRankedResults(self, query_vector, docs_vectors, n):
