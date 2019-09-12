@@ -28,7 +28,7 @@ def kWayMerge(op_dir, files, op_file, last_iter):
             if smallest[0] == prev_word:
                 last_file.write('|' + str(smallest[1]) + 'd' + smallest[2].strip("\n"))
             else:
-                if word_cnt > 30000:
+                if word_cnt > 1000000:
                     last_file.close()
                     word_cnt = 0
                 if word_cnt == 0:
