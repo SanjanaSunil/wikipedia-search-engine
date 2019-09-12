@@ -2,6 +2,7 @@ import os
 import re
 import math
 import heapq
+from operator import itemgetter
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
 
@@ -200,13 +201,34 @@ class Searcher():
         return uniq_tokens, query_vector
 
 
+    def calculateOneWordRank(self, posting, n, field):
+        docs = posting.split('|')
+        docs_cnt = []
+        for doc in docs:
+            [docID, field_cnt] = doc.split('d', 1)
+            if field == "-":
+                docs_cnt.append((sum([int(i) for i in re.findall(r'\d+', field_cnt)]), docID))
+            elif field[0] in field_cnt:
+                _, rest = field_cnt.split(field[0])
+                docs_cnt.append((int(re.search(r'\d+', rest).group()), docID))
+        
+        docs_cnt = sorted(docs_cnt, key=itemgetter(0), reverse=True)[:n]
+
+        f = open(self.titles, encoding="utf8", errors='ignore')
+        for doc in docs_cnt:
+            result = self.binarySearchWord(f, int(doc[1]), "integer")
+            if result.rstrip() != "":
+                print(result)
+        f.close()
+
+
     def processAndSearchQuery(self, query):
         query = query.lower()
         query_tokens = self.stem(self.removeStopWords(self.tokenize(query)))
 
         query_tokens, query_vector = self.getDuplicateCount(query_tokens)
         docs_vectors = {}
-        heap = []
+        # heap = []
 
         for i, query_token in enumerate(query_tokens):
             inverted_index = self.binarySearchIndex(query_token[0])
@@ -217,16 +239,18 @@ class Searcher():
                 posting = self.binarySearchWord(f, query_token[0], "string")
                 if posting != "":
                     if len(query_tokens) == 1:
-                        [docID, field_cnt] = posting.split('d', 1) 
-                        heapq.heappush(heap, (int(docID), field_cnt, query_token[1]))
+                        self.calculateOneWordRank(posting, 10, query_token[1])
+                        return
+                        # [docID, field_cnt] = posting.split('d', 1) 
+                        # heapq.heappush(heap, (int(docID), field_cnt, query_token[1]))
                     else:
                         self.calculateTFIDF(query_vector, docs_vectors, posting, i, query_token[1])
                 f.close()
 
-        if len(query_tokens) == 1:
-            self.getTopNResults(heap, 10)
-        else:
-            self.getRankedResults(query_vector, docs_vectors, 10)
+        # if len(query_tokens) == 1:
+        #     self.getTopNResults(heap, 10)
+        # else:
+        self.getRankedResults(query_vector, docs_vectors, 10)
 
 
     def tokenize(self, text):
