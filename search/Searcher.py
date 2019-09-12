@@ -171,7 +171,9 @@ class Searcher():
     def getRankedResults(self, query_vector, docs_vectors, n):
         heap = []
         for docID in docs_vectors:
-            heapq.heappush(heap, (-self.calculateCosineSim(query_vector,docs_vectors[docID]), int(docID)))
+            doc_vector = docs_vectors[docID]
+            doc_wgt = sum(x > 0 for x in doc_vector) * self.calculateCosineSim(query_vector,doc_vector)
+            heapq.heappush(heap, (-doc_wgt, int(docID)))
 
         f = open(self.titles, encoding="utf8", errors='ignore')
         while heap and n > 0:
