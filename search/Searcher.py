@@ -85,12 +85,14 @@ class Searcher():
         cnt = 0
         cnt_heap = []
 
-        while docID_heap:
+        limit = 5000
+        while docID_heap and limit:
             smallest = heapq.heappop(docID_heap)
             next_info = smallest[1].split('|', 1)
             if len(next_info) > 1:
                 [docID, field_cnt] = next_info[1].split('d', 1)
                 heapq.heappush(docID_heap, (int(docID), field_cnt, smallest[2]))
+                limit -= 1
             if smallest[0] == prev_docID:
                 if smallest[2] == '-':
                     if cnt == 0:
@@ -160,7 +162,10 @@ class Searcher():
         dot_prod = 0
         for i in range(len(query_vector)):
             dot_prod += (query_vector[i] * doc_vector[i])
-        return dot_prod
+        
+        # query_dist = math.sqrt(sum(map(lambda x:x*x, query_vector)))
+        doc_dist = math.sqrt(sum(map(lambda x:x*x, doc_vector)))
+        return dot_prod/math.sqrt(doc_dist)
 
 
     def getRankedResults(self, query_vector, docs_vectors, n):
