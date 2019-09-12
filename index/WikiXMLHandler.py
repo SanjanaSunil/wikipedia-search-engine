@@ -87,7 +87,7 @@ class WikiXMLHandler(xml.sax.ContentHandler):
             unwanted_files.append(self.output_dir + '/' + str(i) + '-0.txt')
         
         op_file = open(self.output_dir + '/' + str(self.new_merge) + '-1.txt', "w+", encoding='utf-8')
-        mergeFiles.kWayMerge(files, op_file)
+        mergeFiles.kWayMerge(self.output_dir, files, op_file, False)
 
         [f.close() for f in files]
         [os.remove(unwanted_file) for unwanted_file in unwanted_files]

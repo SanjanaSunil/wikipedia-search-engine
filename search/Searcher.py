@@ -10,13 +10,40 @@ class Searcher():
     def __init__(self, path_to_index):
         self.sno = SnowballStemmer('english')
         self.stop_words = set(stopwords.words('english'))
-        self.inverted_index = os.path.join(path_to_index, 'inverted_index.txt')
+
+        self.index_path = path_to_index
+
+        self.inverted_indices = []
+        for f in os.listdir(path_to_index):
+            if f != 'titles.txt' and f != 'extra.txt':
+                self.inverted_indices.append(f)
+        self.inverted_indices.sort()
+
+        # self.inverted_index = os.path.join(path_to_index, 'inverted_index.txt')
         self.titles = os.path.join(path_to_index, 'titles.txt')
 
         f = open(os.path.join(path_to_index, 'extra.txt'), "r")
         self.total_docs = int(f.readline())
         f.close()
     
+
+    def binarySearchIndex(self, word):
+        l = 0
+        r = len(self.inverted_indices) - 1
+        ans = -1
+
+        while l <= r:
+            mid = (l + r) // 2
+            if self.inverted_indices[mid] <= word:
+                ans = mid
+                l = mid + 1
+            else:
+                r = mid - 1
+
+        if ans == -1 or self.inverted_indices[ans] > word:
+            return ""        
+        return self.inverted_indices[ans]
+
 
     def binarySearchWord(self, f, word, inp_type): 
         f.seek(0, 2)
@@ -177,16 +204,20 @@ class Searcher():
         docs_vectors = {}
         heap = []
 
-        f = open(self.inverted_index, encoding="utf8", errors='ignore')
         for i, query_token in enumerate(query_tokens):
-            posting = self.binarySearchWord(f, query_token[0], "string")
-            if posting != "":
-                if len(query_tokens) == 1:
-                    [docID, field_cnt] = posting.split('d', 1) 
-                    heapq.heappush(heap, (int(docID), field_cnt, query_token[1]))
-                else:
-                    self.calculateTFIDF(query_vector, docs_vectors, posting, i, query_token[1])
-        f.close()
+            inverted_index = self.binarySearchIndex(query_token[0])
+
+            if inverted_index != "":
+                index_file = os.path.join(self.index_path, inverted_index)
+                f = open(index_file, encoding="utf8", errors='ignore')
+                posting = self.binarySearchWord(f, query_token[0], "string")
+                if posting != "":
+                    if len(query_tokens) == 1:
+                        [docID, field_cnt] = posting.split('d', 1) 
+                        heapq.heappush(heap, (int(docID), field_cnt, query_token[1]))
+                    else:
+                        self.calculateTFIDF(query_vector, docs_vectors, posting, i, query_token[1])
+                f.close()
 
         if len(query_tokens) == 1:
             self.getTopNResults(heap, 10)

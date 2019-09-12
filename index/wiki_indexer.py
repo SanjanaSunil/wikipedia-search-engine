@@ -20,6 +20,10 @@ if __name__ == "__main__":
     parser.parse(xmlFilePath)
     wikiHandler.mergeInitialFiles()
 
+    extra_file = open(os.path.join(output_dir, 'extra.txt'), "w+")
+    extra_file.write(str(wikiHandler.docID))
+    extra_file.close()
+
     mergeFiles.externalSort(output_dir)
 
     print("--- %s seconds ---" % (time.time() - start_time))
