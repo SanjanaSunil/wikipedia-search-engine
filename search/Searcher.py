@@ -129,7 +129,7 @@ class Searcher():
 
 
     def calculateTFIDF(self, query_vector, docs_vectors, posting, query_idx, field):
-        docs_info = posting.split('|')
+        docs_info = posting.split('|', 150000)[:149999]
         total_doc_words = 0
         if field == '-':
             total_doc_words = len(docs_info)
@@ -204,7 +204,7 @@ class Searcher():
 
 
     def calculateOneWordRank(self, posting, n, field):
-        docs = posting.split('|')
+        docs = posting.split('|', 1500000)[:1499999]
         docs_cnt = []
         for doc in docs:
             [docID, field_cnt] = doc.split('d', 1)
