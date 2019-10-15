@@ -129,7 +129,7 @@ class Searcher():
 
 
     def calculateTFIDF(self, query_vector, docs_vectors, posting, query_idx, field):
-        docs_info = posting.split('|', 150000)[:149999]
+        docs_info = posting.split('|', 100000)[:99999]
         total_doc_words = 0
         if field == '-':
             total_doc_words = len(docs_info)
